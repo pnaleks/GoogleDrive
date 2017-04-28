@@ -1,1 +1,1 @@
-include ':app', ':googledrivetest'
+include ':googledrive', ':googledrivetest'
