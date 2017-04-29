@@ -1,4 +1,9 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
 android {
     compileSdkVersion 25
@@ -6,9 +11,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        versionCode 3
+        versionName "1.0.2"
     }
     buildTypes {
         release {
@@ -16,9 +20,104 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    testOptions {
-        unitTests.returnDefaultValues = true
-    }}
+}
+
+def siteUrl = 'https://github.com/pnaleks/GoogleDrive'
+def gitUrl = 'https://github.com/pnaleks/GoogleDrive.git'
+
+bintray {
+    user = properties.getProperty('bintray_user')
+    key = properties.getProperty('bintray_key')
+
+    version = android.defaultConfig.versionName
+    //configurations = ['published', 'archives']
+    configurations = ['archives']
+    dryRun = false
+    publish = true
+
+    pkg {
+        group = 'ru.pnapp'
+        repo = 'pnapp'
+        name = 'googledrive'
+        desc = 'Simple framework to access files on Google Drive'
+        websiteUrl = siteUrl
+        issueTrackerUrl = 'https://github.com/pnaleks/GoogleDrive/issues'
+        vcsUrl = gitUrl
+        licenses = ['Apache-2.0']
+        //labels = ['aar', 'android', 'example']
+        publicDownloadNumbers = true
+        version {
+            name = android.defaultConfig.versionName
+            desc = 'Initial release'
+            vcsTag = android.defaultConfig.versionName
+        }
+    }
+}
+
+install {
+    repositories {
+//        mavenDeployer {
+//            pom {
+//                groupId = 'ru.pnapp'
+//                artifactId = 'googledrive'
+//            }
+//        }
+        mavenInstaller {
+            pom {
+                project {
+                    packaging 'aar'
+                    name 'Simple framework to access files on Google Drive'
+                    url siteUrl
+                    licenses {
+                        license {
+                            name 'The Apache Software License, Version 2.0'
+                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id 'pnaleks'
+                            name 'Petr Alekseev'
+                            email 'pnaleks@gmail.com'
+                        }
+                    }
+                    scm {
+                        //connection 'https://github.com/bintray/bintray-examples.git'
+                        //developerConnection 'https://github.com/bintray/bintray-examples.git'
+                        url siteUrl
+                    }
+                }
+            }
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    options.encoding = 'UTF-8'
+    options.locale = 'ru'
+    options.charSet = 'UTF-8'
+    options.docEncoding = 'UTF-8'
+    //options.links("http://simple.sourceforge.net/download/stream/doc/javadoc/")
+    exclude '**/BuildConfig.java'
+    exclude '**/R.java'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
