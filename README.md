@@ -67,7 +67,6 @@ class MainActivity extends AppCompatActivity implements GoogleDrive.Client {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    drive.destroy();
                 }
             }
         };
