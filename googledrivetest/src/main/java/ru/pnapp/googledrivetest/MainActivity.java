@@ -51,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements GoogleDrive.Clien
 
     TextView textView;
 
+    boolean canceled;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +63,12 @@ public class MainActivity extends AppCompatActivity implements GoogleDrive.Clien
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (drive != null && drive.activityResultCallback(this, requestCode, resultCode, data)) {
-            set(R.id.activity_result, true);
+            if (resultCode == RESULT_OK) {
+                set(R.id.activity_result, true);
+            } else {
+                set(R.id.activity_result, false);
+                canceled = true;
+            }
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -70,6 +77,8 @@ public class MainActivity extends AppCompatActivity implements GoogleDrive.Clien
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (canceled) return;
 
         if (drive == null) {
             new AlertDialog.Builder(this)
