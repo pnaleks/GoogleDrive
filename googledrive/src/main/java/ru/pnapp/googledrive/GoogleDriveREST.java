@@ -152,7 +152,7 @@ public class GoogleDriveREST extends GoogleDrive {
     public void init(Context context) {
         mContext = context;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        accountName = preferences.getString(PREF_ACCOUNT_NAME, accountName);
+        accountName = preferences.getString(PREF_ACCOUNT_NAME, null);
         drive = null;
     }
 
