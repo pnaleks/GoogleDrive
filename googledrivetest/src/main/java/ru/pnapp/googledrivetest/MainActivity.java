@@ -18,6 +18,7 @@ package ru.pnapp.googledrivetest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements GoogleDrive.Clien
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        textView = (TextView) findViewById(R.id.text);
+        textView = findViewById(R.id.text);
     }
 
     @Override
@@ -74,6 +75,8 @@ public class MainActivity extends AppCompatActivity implements GoogleDrive.Clien
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    AlertDialog.Builder mSelectScopeDialog = null;
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -81,6 +84,17 @@ public class MainActivity extends AppCompatActivity implements GoogleDrive.Clien
         if (canceled) return;
 
         if (drive == null) {
+            mSelectScopeDialog = new AlertDialog.Builder(MainActivity.this)
+                    .setTitle("Select scope")
+                    .setItems(SCOPES, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            drive.setScope(new Scope(SCOPES[which]));
+                            drive.init(MainActivity.this);
+                            new Thread(test).start();
+                        }
+                    });
+
             new AlertDialog.Builder(this)
                     .setTitle("Select implementation")
                     .setItems(
@@ -91,29 +105,40 @@ public class MainActivity extends AppCompatActivity implements GoogleDrive.Clien
                                     switch (which) {
                                         case 0:
                                             drive = new GoogleDriveAndroid();
+                                            mSelectScopeDialog.show();
                                             break;
                                         case 1:
                                             drive = new GoogleDriveREST();
+                                            if (PreferenceManager.getDefaultSharedPreferences(MainActivity.this).contains("accountName")) {
+                                                String accountName = PreferenceManager.getDefaultSharedPreferences(MainActivity.this).getString("accountName", null);
+                                                new AlertDialog.Builder(MainActivity.this)
+                                                        .setTitle("Reset account")
+                                                        .setMessage("Current account is: " + accountName + "\nReset the account?")
+                                                        .setPositiveButton("Reset", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                                PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit()
+                                                                    .remove("accountName")
+                                                                    .apply();
+                                                                mSelectScopeDialog.show();
+                                                            }
+                                                        })
+                                                        .setNegativeButton("Keep", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                                mSelectScopeDialog.show();
+                                                            }
+                                                        })
+                                                        .show();
+                                            } else {
+                                                mSelectScopeDialog.show();
+                                            }
                                             break;
                                         default:
                                             finish();
-                                            return;
                                     }
-
-                                    new AlertDialog.Builder(MainActivity.this)
-                                            .setTitle("Select scope")
-                                            .setItems(SCOPES, new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    drive.setScope(new Scope(SCOPES[which]));
-                                                    drive.init(MainActivity.this);
-                                                    new Thread(test).start();
-                                                }
-                                            })
-                                            .show();
                                 }
-                    })
-                    .show();
+                    }).show();
         } else {
             new Thread(test).start();
         }

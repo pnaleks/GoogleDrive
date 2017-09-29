@@ -108,6 +108,8 @@ public class GoogleDriveREST extends GoogleDrive {
 
             credential = GoogleAccountCredential.usingOAuth2(mContext, Collections.singleton(mScope.toString()));
 
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+            accountName = preferences.getString(PREF_ACCOUNT_NAME, null);
             if (accountName == null) {
                 setEnabled(false);
                 if (mContext instanceof Activity) {
@@ -151,8 +153,6 @@ public class GoogleDriveREST extends GoogleDrive {
     @Override
     public void init(Context context) {
         mContext = context;
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        accountName = preferences.getString(PREF_ACCOUNT_NAME, null);
         drive = null;
     }
 
