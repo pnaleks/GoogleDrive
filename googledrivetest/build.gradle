@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.1'
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "ru.pnapp.googledrivetest"
         minSdkVersion 15
@@ -24,8 +24,10 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:26.0.2'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile project(':googledrive')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation project(':googledrive')
+    implementation 'com.google.android.gms:play-services-drive:12.0.1'
+    implementation 'com.google.apis:google-api-services-drive:v3-rev64-1.22.0' exclude module: 'httpclient'
 }

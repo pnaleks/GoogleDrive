@@ -7,7 +7,7 @@ properties.load(project.rootProject.file('local.properties').newDataInputStream(
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.1'
+    buildToolsVersion '27.0.3'
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 26
@@ -122,13 +122,13 @@ artifacts {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:26.0.2'
-    compile 'com.google.android.gms:play-services-drive:11.0.4'
-    compile 'com.google.api-client:google-api-client:1.20.0' exclude module: 'httpclient'
-    compile 'com.google.api-client:google-api-client-android:1.22.0' exclude module: 'httpclient'
-    compile 'com.google.http-client:google-http-client-gson:1.22.0' exclude module: 'httpclient'
-    compile 'com.google.apis:google-api-services-drive:v3-rev64-1.22.0' exclude module: 'httpclient'
-    compile 'com.google.android.gms:play-services-identity:11.0.4'
-    compile 'com.google.android.gms:play-services-auth:11.0.4'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.google.android.gms:play-services-drive:12.0.1'
+    implementation 'com.google.api-client:google-api-client:1.20.0' exclude module: 'httpclient'
+    implementation 'com.google.api-client:google-api-client-android:1.22.0' exclude module: 'httpclient'
+    implementation 'com.google.http-client:google-http-client-gson:1.22.0' exclude module: 'httpclient'
+    implementation 'com.google.apis:google-api-services-drive:v3-rev64-1.22.0' exclude module: 'httpclient'
+    implementation 'com.google.android.gms:play-services-identity:12.0.1'
+    implementation 'com.google.android.gms:play-services-auth:12.0.1'
 }
